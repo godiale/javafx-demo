@@ -1,5 +1,7 @@
 package application;
 
+import java.text.MessageFormat;
+
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -8,11 +10,15 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -83,20 +89,27 @@ public class Main extends Application {
 
     private void createSceneMove(Stage primaryStage) {
 
-        GridPane grid = new GridPane();
-        grid.setAlignment(Pos.CENTER);
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(25, 25, 25, 25));
+        Canvas canvas = new Canvas(300, 275);
+        GraphicsContext gc = canvas.getGraphicsContext2D();
 
-        Text scenetitle = new Text("BUBU");
-        scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
-        grid.add(scenetitle, 0, 0, 2, 1);
+        gc.setStroke(Color.BLUE);
+        gc.setLineWidth(5);
+        gc.strokeRoundRect(160, 60, 30, 30, 10, 10);
 
-        Group group = new Group();
-        group.getChildren().addAll(grid);
+        canvas.addEventHandler(MouseEvent.MOUSE_CLICKED,
+                new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent t) {
+                        System.out.println(MessageFormat.format(
+                                "Click at ({0},{1})", t.getSceneX(), t.getSceneY()));
+                        gc.strokeRoundRect(t.getSceneX(), t.getSceneY(), 30, 30, 10, 10);
+                    }
+                });
 
-        sceneMove = new Scene(group, 300, 275);
+        Group root = new Group();
+        root.getChildren().add(canvas);
+
+        sceneMove = new Scene(root);
     }
 
     public static void main(String[] args) {
